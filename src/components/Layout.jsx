@@ -31,9 +31,8 @@ export default function Layout() {
     ["/admin/projects", "Projects", Building2, false],
     ["/admin/materials", "Materials", Package, false],
 
-    // Opens in NEW browser tab
-    ["/admin/attendance", "Attendance", ClipboardCheck, true],
-    ["/admin/workers", "Labour", Users, true],
+    ["/admin/attendance", "Attendance", ClipboardCheck, false],
+    ["/admin/workers", "Labour", Users, false],
   ];
 
   /* =========================================================
@@ -171,13 +170,12 @@ export default function Layout() {
           <nav className="hidden items-center gap-1.5 lg:flex">
 
             {links.map(
-              ([to, label, Icon, newTab]) => (
+              ([to, label, Icon]) => (
                 <NavItem
                   key={to}
                   to={to}
                   label={label}
                   Icon={Icon}
-                  newTab={newTab}
                 />
               )
             )}
@@ -266,13 +264,12 @@ export default function Layout() {
             <nav className="grid gap-1.5">
 
               {links.map(
-                ([to, label, Icon, newTab]) => (
+                ([to, label, Icon]) => (
                   <NavItem
                     key={to}
                     to={to}
                     label={label}
                     Icon={Icon}
-                    newTab={newTab}
                     onClick={() => setOpen(false)}
                     mobile
                   />
@@ -333,70 +330,10 @@ function NavItem({
   Icon,
   onClick,
   mobile = false,
-  newTab = false,
 }) {
   const sizeClass = mobile
     ? "w-full px-4 py-3.5"
     : "px-3.5 py-2.5";
-
-  /* =======================================================
-     NEW TAB NAVIGATION
-     Attendance + Labour
-  ======================================================= */
-
-  if (newTab) {
-    return (
-      <a
-        href={to}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={onClick}
-        title={`${label} - Opens in new tab`}
-        className={`
-          group relative flex items-center gap-2.5 rounded-xl
-          border border-amber-200/70
-          bg-gradient-to-r
-          from-amber-50
-          via-yellow-50
-          to-emerald-50
-          text-sm font-bold
-          text-emerald-800
-          shadow-sm
-          shadow-amber-900/5
-          transition-all
-          duration-200
-          ${sizeClass}
-
-          hover:-translate-y-0.5
-          hover:border-amber-300
-          hover:from-amber-100
-          hover:via-yellow-100
-          hover:to-emerald-100
-          hover:text-emerald-950
-          hover:shadow-md
-          hover:shadow-amber-900/10
-
-          focus:outline-none
-          focus:ring-2
-          focus:ring-amber-300/60
-        `}
-      >
-
-        <NavContent
-          Icon={Icon}
-          label={label}
-          mobile={mobile}
-          isActive={false}
-          newTab={true}
-        />
-
-      </a>
-    );
-  }
-
-  /* =======================================================
-     NORMAL SAME-TAB NAVIGATION
-  ======================================================= */
 
   return (
     <NavLink
@@ -405,36 +342,15 @@ function NavItem({
       end={to === "/admin"}
       className={({ isActive }) => `
         group relative flex items-center gap-2.5 rounded-xl
-        text-sm font-bold
-        transition-all
-        duration-200
+        text-sm font-bold transition-all duration-200
         ${sizeClass}
-
-        ${
-          isActive
-            ? `
-              bg-gradient-to-r
-              from-[#17251B]
-              via-[#263A28]
-              to-[#3F5130]
-              text-white
-              shadow-md
-              shadow-emerald-900/20
-              hover:shadow-lg
-            `
-            : `
-              text-slate-600
-              hover:bg-emerald-50
-              hover:text-emerald-800
-            `
+        ${isActive
+          ? "bg-gradient-to-r from-[#17251B] via-[#263A28] to-[#3F5130] text-white shadow-md shadow-emerald-900/20 hover:shadow-lg"
+          : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-800"
         }
-
-        focus:outline-none
-        focus:ring-2
-        focus:ring-emerald-300/50
+        focus:outline-none focus:ring-2 focus:ring-emerald-300/50
       `}
     >
-
       {({ isActive }) => (
         <NavContent
           Icon={Icon}
@@ -444,11 +360,9 @@ function NavItem({
           newTab={false}
         />
       )}
-
     </NavLink>
   );
 }
-
 
 /* =========================================================
    NAVIGATION CONTENT
@@ -486,11 +400,10 @@ function NavContent({
 
           ${mobile ? "h-9 w-9" : "h-7 w-7"}
 
-          ${
-            isActive
-              ? "bg-white/10 text-amber-300"
-              : newTab
-                ? `
+          ${isActive
+            ? "bg-white/10 text-amber-300"
+            : newTab
+              ? `
                   bg-gradient-to-br
                   from-amber-100
                   to-emerald-100
@@ -499,7 +412,7 @@ function NavContent({
                   group-hover:scale-105
                   group-hover:rotate-1
                 `
-                : `
+              : `
                   bg-slate-100
                   text-slate-500
                   group-hover:bg-emerald-100

@@ -153,21 +153,19 @@ function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE);
 
-    if (!raw) {
-      return seed;
-    }
+    if (!raw) return seed;
 
     const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return seed;
 
     return {
       ...seed,
       ...parsed,
-
-      users: parsed.users || [],
-      projects: parsed.projects || [],
-      materials: parsed.materials || [],
-      attendance: parsed.attendance || [],
-      materialUsage: parsed.materialUsage || [],
+      users: Array.isArray(parsed.users) ? parsed.users : seed.users,
+      projects: Array.isArray(parsed.projects) ? parsed.projects : seed.projects,
+      materials: Array.isArray(parsed.materials) ? parsed.materials : seed.materials,
+      attendance: Array.isArray(parsed.attendance) ? parsed.attendance : seed.attendance,
+      materialUsage: Array.isArray(parsed.materialUsage) ? parsed.materialUsage : [],
     };
   } catch {
     return seed;
@@ -196,10 +194,11 @@ export function AppProvider({ children }) {
   ======================================================= */
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE,
-      JSON.stringify(data)
-    );
+    try {
+      localStorage.setItem(STORAGE, JSON.stringify(data));
+    } catch (error) {
+      console.error("Failed to save BuildTrack data:", error);
+    }
   }, [data]);
 
   /* =======================================================
@@ -347,9 +346,9 @@ export function AppProvider({ children }) {
       users: d.users.map((u) =>
         u.id === id
           ? {
-              ...u,
-              ...patch,
-            }
+            ...u,
+            ...patch,
+          }
           : u
       ),
     }));
@@ -401,9 +400,9 @@ export function AppProvider({ children }) {
         (project) =>
           project.id === id
             ? {
-                ...project,
-                ...patch,
-              }
+              ...project,
+              ...patch,
+            }
             : project
       ),
     }));
@@ -495,14 +494,14 @@ export function AppProvider({ children }) {
 
           const quantity = Number(
             patch.quantity ??
-              material.quantity ??
-              0
+            material.quantity ??
+            0
           );
 
           const used = Number(
             patch.used ??
-              material.used ??
-              0
+            material.used ??
+            0
           );
 
           return {
@@ -594,9 +593,9 @@ export function AppProvider({ children }) {
         (attendance) =>
           attendance.id === id
             ? {
-                ...attendance,
-                ...patch,
-              }
+              ...attendance,
+              ...patch,
+            }
             : attendance
       ),
     }));
